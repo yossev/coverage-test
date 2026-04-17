@@ -1,6 +1,5 @@
 # .github/workflows/coverage.yml
 name: Coverage gate
-
 on:
   pull_request:
     branches: [main, master]
@@ -98,3 +97,8 @@ jobs:
               repo: context.repo.repo,
               body: `⚠️ **New code coverage is ${percent}% — below the 80% threshold**\n\n\`\`\`\n${diff}\n\`\`\``
             })
+      - name: Documentation Link
+        run: |
+          echo "For Documentation please refer to the link below:"
+          echo "https://mymarkdown.xyz/doc/06473fd4-c0cb-4ab2-a025-4eaa467a4577"
+            
