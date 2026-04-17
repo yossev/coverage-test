@@ -46,7 +46,8 @@ jobs:
       - name: Check diff coverage
         id: diff_coverage
         run: |
-          OUTPUT=$(pycobertura diff base-coverage.cobertura.xml pr-coverage.cobertura.xml 2>&1) || true
+          # Adding --no-source prevents the FileNotFoundError
+          OUTPUT=$(pycobertura diff --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml 2>&1) || true
           echo "$OUTPUT"
 
           COVERED=$(echo "$OUTPUT" | grep -oP '(\d+(\.\d+)?)(?=%)' | tail -1)
@@ -75,7 +76,7 @@ jobs:
         with:
           script: |
             const { execSync } = require('child_process')
-            const diff = execSync('pycobertura diff base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString()
+            const diff = execSync('pycobertura diff --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString()
             const percent = '${{ steps.diff_coverage.outputs.coverage_percent }}'
             github.rest.issues.createComment({
               issue_number: context.issue.number,
