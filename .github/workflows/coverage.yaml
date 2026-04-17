@@ -33,7 +33,6 @@ jobs:
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
             /p:CoverletOutput=$GITHUB_WORKSPACE/base-coverage.cobertura.xml
-          ls $GITHUB_WORKSPACE/*.xml
       - name: Run tests on PR branch
         working-directory: head
         run: |
@@ -41,7 +40,6 @@ jobs:
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
             /p:CoverletOutput=$GITHUB_WORKSPACE/pr-coverage.cobertura.xml
-          ls $GITHUB_WORKSPACE/*.xml
       - name: Install pycobertura
         run: pip install pycobertura
 
