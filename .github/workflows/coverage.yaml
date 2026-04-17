@@ -33,11 +33,6 @@ jobs:
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
             /p:CoverletOutput=$GITHUB_WORKSPACE/base-coverage.cobertura.xml
-          echo "--- files in GITHUB_WORKSPACE ---"
-          ls $GITHUB_WORKSPACE/
-          echo "--- files in base ---"
-          ls $GITHUB_WORKSPACE/base/
-          find $GITHUB_WORKSPACE -name "*.xml" 2>/dev/null
       - name: Run tests on PR branch
         working-directory: head
         run: |
