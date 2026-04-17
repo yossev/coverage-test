@@ -32,16 +32,16 @@ jobs:
           dotnet test \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=../base-coverage.cobertura.xml
-
+            /p:CoverletOutput=$GITHUB_WORKSPACE/base-coverage.cobertura.xml
+          ls $GITHUB_WORKSPACE/*.xml
       - name: Run tests on PR branch
         working-directory: head
         run: |
           dotnet test \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=../pr-coverage.cobertura.xml
-
+            /p:CoverletOutput=$GITHUB_WORKSPACE/pr-coverage.cobertura.xml
+          ls $GITHUB_WORKSPACE/*.xml
       - name: Install pycobertura
         run: pip install pycobertura
 
