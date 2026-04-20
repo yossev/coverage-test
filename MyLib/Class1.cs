@@ -9,5 +9,5 @@ public class Calculator
 
     public int Modulu(int a, int b) => a % b;
 
-    public int Power(int a, int b) => a ** b;
+    public int Power(int a, int b) => Math.Pow(a, b);
 }
