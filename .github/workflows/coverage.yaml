@@ -83,20 +83,26 @@ jobs:
             try {
               // We use a try/catch because pycobertura returns an error code
               // if coverage decreased, which causes execSync to throw.
-              diff = execSync('pycobertura diff --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
+              diff = execSync('pycobertura diff --format markdown --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
             } catch (error) {
               // If it "fails", the output (the table) is usually in error.stdout
               diff = error.stdout ? error.stdout.toString() : error.message;
             }
 
             const percent = '${{ steps.diff_coverage.outputs.coverage_percent }}';
-            
+                      
             github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `⚠️ **New code coverage is ${percent}% — below the 80% threshold**\n\n\`\`\`\n${diff}\n\`\`\``
-            })
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `### ⚠️ Code Coverage Alert
+            **New code coverage is ${percent}%** — which is below the required **80%** threshold.
+
+            #### Coverage Diff Report:
+            \`\`\`text
+            ${diff}
+            \`\`\`
+
       - name: Documentation Link
         run: |
           echo "For Documentation please refer to the link below:"
