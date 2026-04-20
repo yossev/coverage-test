@@ -8,4 +8,6 @@ public class Calculator
     public int Divide(int a, int b) => a / b;
 
     public int Modulu(int a, int b) => a % b;
+
+    public int Power(int a, int b) => a ** b;
 }
