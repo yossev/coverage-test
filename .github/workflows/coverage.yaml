@@ -83,7 +83,7 @@ jobs:
             try {
               // We use a try/catch because pycobertura returns an error code
               // if coverage decreased, which causes execSync to throw.
-              diff = execSync('pycobertura diff --format html --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
+              diff = execSync('pycobertura diff --format markdown --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
             } catch (error) {
               // If it "fails", the output (the table) is usually in error.stdout
               diff = error.stdout ? error.stdout.toString() : error.message;
