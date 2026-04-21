@@ -95,8 +95,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `⚠️ **New code coverage is ${percent}% — below the 80% threshold**\n\n\`\`\`\n${diff}\n\`\`\``
-            })
+              body: `⚠️ **New code coverage is ${percent}% — below the 80% threshold**\n\n${diff}`            })
       - name: Documentation Link
         run: |
           echo "For Documentation please refer to the link below:"
