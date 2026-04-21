@@ -50,7 +50,7 @@ jobs:
         id: diff_coverage
         run: |
           # Adding --no-source prevents the FileNotFoundError
-          OUTPUT=$(pycobertura diff --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml 2>&1) || true
+          OUTPUT=$(pycobertura diff --no-source --no-color base-coverage.cobertura.xml pr-coverage.cobertura.xml 2>&1) || true
           echo "$OUTPUT"
 
           COVERED=$(echo "$OUTPUT" | grep -oP '(\d+(\.\d+)?)(?=%)' | tail -1)
@@ -83,7 +83,7 @@ jobs:
             try {
               // We use a try/catch because pycobertura returns an error code
               // if coverage decreased, which causes execSync to throw.
-              diff = execSync('pycobertura diff --format markdown --no-source base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
+              diff = execSync('pycobertura diff --format markdown --no-source --no-color base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
             } catch (error) {
               // If it "fails", the output (the table) is usually in error.stdout
               diff = error.stdout ? error.stdout.toString() : error.message;
