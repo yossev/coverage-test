@@ -1,6 +1,5 @@
 # .github/workflows/coverage.yml
 name: Coverage gate
-
 on:
   pull_request:
     branches: [main, master]
@@ -8,6 +7,10 @@ on:
 jobs:
   coverage:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: read
 
     steps:
       - name: Checkout base branch
@@ -32,23 +35,22 @@ jobs:
           dotnet test \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=../base-coverage.cobertura.xml
-
+            /p:CoverletOutput=$GITHUB_WORKSPACE/base-coverage.cobertura.xml
       - name: Run tests on PR branch
         working-directory: head
         run: |
           dotnet test \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=../pr-coverage.cobertura.xml
-
+            /p:CoverletOutput=$GITHUB_WORKSPACE/pr-coverage.cobertura.xml
       - name: Install pycobertura
         run: pip install pycobertura
 
       - name: Check diff coverage
         id: diff_coverage
         run: |
-          OUTPUT=$(pycobertura diff base-coverage.cobertura.xml pr-coverage.cobertura.xml 2>&1) || true
+          # Adding --no-source prevents the FileNotFoundError
+          OUTPUT=$(pycobertura diff --no-source --no-color base-coverage.cobertura.xml pr-coverage.cobertura.xml 2>&1) || true
           echo "$OUTPUT"
 
           COVERED=$(echo "$OUTPUT" | grep -oP '(\d+(\.\d+)?)(?=%)' | tail -1)
@@ -76,12 +78,26 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { execSync } = require('child_process')
-            const diff = execSync('pycobertura diff base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString()
-            const percent = '${{ steps.diff_coverage.outputs.coverage_percent }}'
+            const { execSync } = require('child_process');
+            let diff;
+            try {
+              // We use a try/catch because pycobertura returns an error code
+              // if coverage decreased, which causes execSync to throw.
+              diff = execSync('pycobertura diff --format markdown --no-source --no-color base-coverage.cobertura.xml pr-coverage.cobertura.xml').toString();
+            } catch (error) {
+              // If it "fails", the output (the table) is usually in error.stdout
+              diff = error.stdout ? error.stdout.toString() : error.message;
+            }
+
+            const percent = '${{ steps.diff_coverage.outputs.coverage_percent }}';
+            
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `⚠️ **New code coverage is ${percent}% — below the 80% threshold**\n\n\`\`\`\n${diff}\n\`\`\``
-            })
+              body: `⚠️ **New code coverage is ${percent}% — below the 80% threshold**\n\n${diff}`})
+      - name: Documentation Link
+        run: |
+          echo "For Documentation please refer to the link below:"
+          echo "https://mymarkdown.xyz/doc/06473fd4-c0cb-4ab2-a025-4eaa467a4577"
+            
